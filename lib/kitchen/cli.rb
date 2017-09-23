@@ -234,6 +234,13 @@ module Kitchen
       perform("test", "test", args)
     end
 
+    desc "suspend INSTANCE|REGEXP", "Suspend one instance"
+    log_options
+    def suspend(*args)
+      update_config!
+      perform("suspend", "suspend", args)
+    end
+
     desc "login INSTANCE|REGEXP", "Log in to one instance"
     log_options
     def login(*args)

@@ -136,6 +136,17 @@ Feature: Running instance actions
     Then the stdout should match /^client-beans\s+.+\s+Set Up\s+Kitchen::ActionFailed\Z/
 
   @spawn
+  Scenario: Suspending a single instance
+    When I successfully run `kitchen create client-beans`
+    And I successfully run `kitchen list client-beans`
+    Then the stdout should match /^client-beans\s+.+\s+Created\s+\<None\>\Z/
+    When I run `kitchen suspend client-beans`
+    Then the output should contain "Finished suspending <client-beans>"
+    And the exit status should be 0
+    When I successfully run `kitchen list client-beans`
+    Then the stdout should match /^client-beans\s+.+\s+\<Suspended\>\s+\<None\>\Z/
+
+  @spawn
   Scenario: Destroying a single instance
     When I successfully run `kitchen create client-beans`
     And I successfully run `kitchen list client-beans`
