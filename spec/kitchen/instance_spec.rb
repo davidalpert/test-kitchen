@@ -561,6 +561,47 @@ describe Kitchen::Instance do
             .must_match regex_for("Cannot suspend #{instance.to_str} - instance is already suspended.")
           end
         end
+
+        describe "unsuspended" do
+          before { state_file.write(suspended: false) }
+
+          [:create, :converge, :setup, :verify].each do |s|
+            describe "with last action of #{s}" do
+              before { state_file.write(last_action: s) }
+
+              it "calls Driver#suspend" do
+                driver.expects(:suspend)
+
+                instance.suspend
+              end
+
+              it "writes the state file with suspended" do
+                instance.suspend
+
+                state_file.read[:suspended].must_equal true
+              end
+
+              it "writes the state file with the same last action" do
+                instance.suspend
+
+                state_file.read[:last_action].must_equal s
+              end
+
+              it "logs the action start" do
+                instance.suspend
+
+                logger_io.string.must_match regex_for("Suspending #{instance.to_str}")
+              end
+
+              it "logs the action finish" do
+                instance.suspend
+
+                logger_io.string
+                  .must_match regex_for("Suspended #{instance.to_str}.")
+              end
+            end
+          end
+        end
       end
     end
 

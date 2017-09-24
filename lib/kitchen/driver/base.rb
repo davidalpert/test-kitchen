@@ -50,6 +50,13 @@ module Kitchen
         false
       end
 
+      # Suspends an instance.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @raise [ActionFailed] if the action could not be completed
+      def suspend(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
+
       # Destroys an instance.
       #
       # @param state [Hash] mutable instance and driver state

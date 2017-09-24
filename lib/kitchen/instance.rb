@@ -167,7 +167,13 @@ module Kitchen
         warn("Cannot suspend #{to_str} - instance is already suspended.")
       elsif state[:last_action].nil?
         warn("Cannot suspend #{to_str} - instance is not created.")
+      elsif [:create, :converge, :setup, :verify].include?(state[:last_action])
+        driver.suspend(state)
+        state[:suspended] = true
+        info("Suspended #{to_str}.")
       end
+    ensure
+      state_file.write(state)
     end
 
     # Destroys this instance.
