@@ -524,6 +524,23 @@ describe Kitchen::Instance do
                    .must_match regex_for("Cannot suspend #{instance.to_str} - instance is not created.")
         end
       end
+
+      describe "with already suspended" do
+        before { state_file.write(suspended: true) }
+
+        it "logs the action start" do
+          instance.suspend
+
+          logger_io.string.must_match regex_for("Suspending #{instance.to_str}")
+        end
+
+        it "logs the action unable to complete" do
+          instance.suspend
+
+          logger_io.string
+                   .must_match regex_for("Cannot suspend #{instance.to_str} - instance is already suspended.")
+        end
+      end
     end
 
     describe "#converge" do

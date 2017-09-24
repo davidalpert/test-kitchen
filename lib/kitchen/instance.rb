@@ -161,7 +161,9 @@ module Kitchen
     def suspend
       banner "Suspending #{to_str} ..."
       state = state_file.read
-      if state[:last_action].nil?
+      if state[:suspended]
+        warn("Cannot suspend #{to_str} - instance is already suspended.")
+      elsif state[:last_action].nil?
         warn("Cannot suspend #{to_str} - instance is not created.")
       end
     end
