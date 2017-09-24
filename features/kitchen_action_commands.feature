@@ -135,7 +135,7 @@ Feature: Running instance actions
     When I successfully run `kitchen list client-beans`
     Then the stdout should match /^client-beans\s+.+\s+Set Up\s+Kitchen::ActionFailed\Z/
 
-  @spawn
+  @spawn @wip
   Scenario: Suspending a single instance
     When I successfully run `kitchen create client-beans`
     And I successfully run `kitchen list client-beans`
