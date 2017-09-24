@@ -510,7 +510,9 @@ describe Kitchen::Instance do
     end
 
     describe "#suspend" do
-      describe "with no state" do
+      describe "driver doesn't support suspend" do
+        before { driver.stubs(:supports_suspend?).returns(false) }
+
         it "logs the action start" do
           instance.suspend
 
@@ -521,24 +523,43 @@ describe Kitchen::Instance do
           instance.suspend
 
           logger_io.string
-                   .must_match regex_for("Cannot suspend #{instance.to_str} - instance is not created.")
+                   .must_match regex_for("Cannot suspend #{instance.to_str} - the [Kitchen::Driver::Dummy] driver does not support suspending.")
         end
       end
 
-      describe "with already suspended" do
-        before { state_file.write(suspended: true) }
+      describe "driver supports suspend" do
+        before { driver.stubs(:supports_suspend?).returns(true) }
 
-        it "logs the action start" do
-          instance.suspend
+        describe "with no state" do
+          it "logs the action start" do
+            instance.suspend
 
-          logger_io.string.must_match regex_for("Suspending #{instance.to_str}")
+            logger_io.string.must_match regex_for("Suspending #{instance.to_str}")
+          end
+
+          it "logs the action unable to complete" do
+            instance.suspend
+
+            logger_io.string
+            .must_match regex_for("Cannot suspend #{instance.to_str} - instance is not created.")
+          end
         end
 
-        it "logs the action unable to complete" do
-          instance.suspend
+        describe "with already suspended" do
+          before { state_file.write(suspended: true) }
 
-          logger_io.string
-                   .must_match regex_for("Cannot suspend #{instance.to_str} - instance is already suspended.")
+          it "logs the action start" do
+            instance.suspend
+
+            logger_io.string.must_match regex_for("Suspending #{instance.to_str}")
+          end
+
+          it "logs the action unable to complete" do
+            instance.suspend
+
+            logger_io.string
+            .must_match regex_for("Cannot suspend #{instance.to_str} - instance is already suspended.")
+          end
         end
       end
     end

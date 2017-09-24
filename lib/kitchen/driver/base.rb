@@ -42,6 +42,14 @@ module Kitchen
       def create(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
+      # Does this driver support the suspend action?
+      # Subclasses who implement suspend and resume actions
+      # can opt-in by returning true.
+      #
+      def supports_suspend?
+        false
+      end
+
       # Destroys an instance.
       #
       # @param state [Hash] mutable instance and driver state
