@@ -525,6 +525,12 @@ describe Kitchen::Instance do
           state_file.read[:last_action].must_equal "converge"
         end
 
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
+        end
+
         it "logs the action start" do
           instance.converge
 
@@ -554,6 +560,12 @@ describe Kitchen::Instance do
 
           state_file.read[:last_action].must_equal "converge"
         end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
+        end
       end
 
       describe "with last action of converge" do
@@ -570,6 +582,12 @@ describe Kitchen::Instance do
           instance.converge
 
           state_file.read[:last_action].must_equal "converge"
+        end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
         end
       end
     end
@@ -591,6 +609,12 @@ describe Kitchen::Instance do
           instance.setup
 
           state_file.read[:last_action].must_equal "setup"
+        end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
         end
 
         it "logs the action start" do
@@ -625,6 +649,12 @@ describe Kitchen::Instance do
 
           state_file.read[:last_action].must_equal "setup"
         end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
+        end
       end
 
       describe "with last action of converge" do
@@ -643,6 +673,12 @@ describe Kitchen::Instance do
 
           state_file.read[:last_action].must_equal "setup"
         end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
+        end
       end
 
       describe "with last action of setup" do
@@ -660,6 +696,12 @@ describe Kitchen::Instance do
           instance.setup
 
           state_file.read[:last_action].must_equal "setup"
+        end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
         end
       end
     end
@@ -683,6 +725,12 @@ describe Kitchen::Instance do
           instance.verify
 
           state_file.read[:last_action].must_equal "verify"
+        end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
         end
 
         it "logs the action start" do
@@ -719,6 +767,12 @@ describe Kitchen::Instance do
 
           state_file.read[:last_action].must_equal "verify"
         end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
+        end
       end
 
       describe "with last of converge" do
@@ -739,6 +793,12 @@ describe Kitchen::Instance do
 
           state_file.read[:last_action].must_equal "verify"
         end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
+        end
       end
 
       describe "with last of setup" do
@@ -755,6 +815,12 @@ describe Kitchen::Instance do
           instance.verify
 
           state_file.read[:last_action].must_equal "verify"
+        end
+
+        it "writes the state file with suspended" do
+          instance.converge
+
+          state_file.read[:suspended].must_equal false
         end
       end
 
@@ -934,6 +1000,16 @@ describe Kitchen::Instance do
           state_file.read[:last_action].must_be_nil
         end
 
+        it "write the state file with suspended" do
+          begin
+            instance.public_send(action)
+          rescue Kitchen::Error
+            true # no need to act here
+          end
+
+          state_file.read[:suspended].must_be_nil
+        end
+
         it "raises an InstanceFailure" do
           proc { instance.public_send(action) }
             .must_raise Kitchen::InstanceFailure
@@ -973,6 +1049,16 @@ describe Kitchen::Instance do
           end
 
           state_file.read[:last_action].must_be_nil
+        end
+
+        it "write the state file with suspended" do
+          begin
+            instance.public_send(action)
+          rescue Kitchen::Error
+            true # no need to act here
+          end
+
+          state_file.read[:suspended].must_be_nil
         end
 
         it "raises an ActionFailed" do
