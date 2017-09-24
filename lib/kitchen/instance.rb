@@ -157,6 +157,15 @@ module Kitchen
       transition_to(:verify)
     end
 
+    # Suspends this instance (if the driver supports suspending).
+    def suspend
+      banner "Suspending #{to_str} ..."
+      state = state_file.read
+      if state[:last_action].nil?
+        warn("Cannot suspend #{to_str} - instance is not created.")
+      end
+    end
+
     # Destroys this instance.
     #
     # @see Driver::Base#destroy
