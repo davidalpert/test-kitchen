@@ -465,6 +465,12 @@ describe Kitchen::Instance do
           state_file.read[:last_action].must_equal "create"
         end
 
+        it "writes the state file with suspended" do
+          instance.create
+
+          state_file.read[:suspended].must_equal false
+        end
+
         it "logs the action start" do
           instance.create
 
@@ -493,6 +499,12 @@ describe Kitchen::Instance do
           instance.create
 
           state_file.read[:last_action].must_equal "create"
+        end
+
+        it "writes the state file with suspended" do
+          instance.create
+
+          state_file.read[:suspended].must_equal false
         end
       end
     end

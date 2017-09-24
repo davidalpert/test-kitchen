@@ -489,6 +489,7 @@ module Kitchen
         synchronize_or_call(what, state, &block)
       end
       state[:last_action] = what.to_s
+      state[:suspended] = false
       state[:last_error] = nil
       elapsed
     rescue ActionFailed => e
