@@ -3,6 +3,39 @@ Feature: Suspending kitchen instances
   As an operator
   I want to run a command to suspend my instances
 
+  Background:
+    Given a file named ".kitchen.yml" with:
+    """
+    ---
+    driver:
+      name: suspendabledummy
+
+    provisioner:
+      name: dummy
+
+    verifier:
+      name: dummy
+
+    platforms:
+      - name: beans
+
+    suites:
+      - name: client
+    """
+
+  @spawn @wip
+  Scenario: Suspending a single instance when suspend is supported
+
+    When I successfully run `kitchen create client-beans`
+    And I successfully run `kitchen list client-beans`
+    Then the stdout should match /^client-beans\s+.+\s+Created\s+\<None\>\Z/
+    When I run `kitchen suspend client-beans`
+    Then the output should contain "Suspending <client-beans> ..."
+    And the output should contain "Suspended <client-beans>."
+    And the exit status should be 0
+    When I successfully run `kitchen list client-beans`
+    Then the stdout should match /^client-beans\s+.+\s+Suspended\s+\<None\>\Z/
+
   @spawn @wip
   Scenario: Suspending a single instance when suspend is not supported
     Given a file named ".kitchen.yml" with:
@@ -32,34 +65,3 @@ Feature: Suspending kitchen instances
     And the exit status should be 0
     When I successfully run `kitchen list client-beans`
     Then the stdout should match /^client-beans\s+.+\s+Created\s+\<None\>\Z/
-
-  @spawn @wip
-  Scenario: Suspending a single instance when suspend is supported
-    Given a file named ".kitchen.yml" with:
-    """
-    ---
-    driver:
-      name: suspendabledummy
-
-    provisioner:
-      name: dummy
-
-    verifier:
-      name: dummy
-
-    platforms:
-      - name: beans
-
-    suites:
-      - name: client
-    """
-
-    When I successfully run `kitchen create client-beans`
-    And I successfully run `kitchen list client-beans`
-    Then the stdout should match /^client-beans\s+.+\s+Created\s+\<None\>\Z/
-    When I run `kitchen suspend client-beans`
-    Then the output should contain "Suspending <client-beans> ..."
-    And the output should contain "Suspended <client-beans>."
-    And the exit status should be 0
-    When I successfully run `kitchen list client-beans`
-    Then the stdout should match /^client-beans\s+.+\s+Suspended\s+\<None\>\Z/
