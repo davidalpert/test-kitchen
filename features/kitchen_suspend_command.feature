@@ -23,7 +23,7 @@ Feature: Suspending kitchen instances
       - name: client
     """
 
-  @spawn @wip
+  @spawn
   Scenario: Suspending a single instance when suspend is supported
 
     When I successfully run `kitchen create client-beans`
@@ -36,7 +36,7 @@ Feature: Suspending kitchen instances
     When I successfully run `kitchen list client-beans`
     Then the stdout should match /^client-beans\s+.+\s+Suspended\s+\<None\>\Z/
 
-  @spawn @wip
+  @spawn
   Scenario Outline: Suspending and resume a single instance doesn't change last action
 
     When I successfully run `kitchen <action> client-beans`
@@ -59,7 +59,7 @@ Feature: Suspending kitchen instances
       | action | last_action |
       | create | Created |
 
-  @spawn @wip
+  @spawn
   Scenario: Suspending a single instance when suspend is not supported
     Given a file named ".kitchen.yml" with:
     """
