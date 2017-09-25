@@ -183,6 +183,29 @@ module Kitchen
       state[:suspended]
     end
 
+    # Resumes this instance if suspended.
+    def resume
+      banner "Resuming #{to_str} ..."
+      state = state_file.read
+      supported = driver.supports_suspend?
+
+      if !supported
+        warn("Cannot resume #{to_str} - the [#{driver.class.name}] driver does not support suspending.")
+      elsif state[:last_action].nil?
+        warn("Cannot resume #{to_str} - instance is not created.")
+      elsif state[:suspended] != true
+        warn("Cannot resume #{to_str} - instance is not suspended.")
+      elsif %w(create converge setup verify).include?(state[:last_action].to_s)
+        driver.resume(state)
+        state[:suspended] = false
+        info("Resumed #{to_str}.")
+      else
+        raise 'Unexpected; should not get here.'
+      end
+    ensure
+      state_file.write(state)
+    end
+
     # Destroys this instance.
     #
     # @see Driver::Base#destroy

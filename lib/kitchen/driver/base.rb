@@ -57,6 +57,13 @@ module Kitchen
       def suspend(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
+      # Resumes an instance.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @raise [ActionFailed] if the action could not be completed
+      def resume(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
+
       # Destroys an instance.
       #
       # @param state [Hash] mutable instance and driver state

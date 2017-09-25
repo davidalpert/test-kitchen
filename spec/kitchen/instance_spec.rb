@@ -623,6 +623,105 @@ describe Kitchen::Instance do
       end
     end
 
+    describe "#resume" do
+      describe "driver doesn't support suspend" do
+        before { driver.stubs(:supports_suspend?).returns(false) }
+
+        it "logs the action start" do
+          instance.resume
+
+          logger_io.string.must_match regex_for("Resuming #{instance.to_str}")
+        end
+
+        it "logs the action unable to complete" do
+          instance.resume
+
+          logger_io.string
+                   .must_match regex_for("Cannot resume #{instance.to_str} - the [Kitchen::Driver::Dummy] driver does not support suspending.")
+        end
+      end
+
+      describe "driver supports suspend" do
+        before { driver.stubs(:supports_suspend?).returns(true) }
+
+        describe "with no state" do
+          it "logs the action start" do
+            instance.resume
+
+            logger_io.string.must_match regex_for("Resuming #{instance.to_str}")
+          end
+
+          it "logs the action unable to complete" do
+            instance.resume
+
+            logger_io.string
+              .must_match regex_for("Cannot resume #{instance.to_str} - instance is not created.")
+          end
+        end
+
+        describe "not suspended" do
+          before do
+            # a last action is also needed if we are to resume
+            state_file.write(suspended: false, last_action: 'create')
+          end
+
+          it "logs the action start" do
+            instance.resume
+
+            logger_io.string.must_match regex_for("Resuming #{instance.to_str}")
+          end
+
+          it "logs the action unable to complete" do
+            instance.resume
+
+            logger_io.string
+              .must_match regex_for("Cannot resume #{instance.to_str} - instance is not suspended.")
+          end
+        end
+
+        describe "suspended" do
+          [:create, :converge, :setup, :verify].each do |s|
+            describe "with last action of #{s}" do
+              before do
+                state_file.write(last_action: s, suspended: true)
+              end
+
+              it "calls Driver#resume" do
+                driver.expects(:resume)
+
+                instance.resume
+              end
+
+              it "writes the state file with suspended" do
+                instance.resume
+
+                state_file.read[:suspended].must_equal false
+              end
+
+              it "writes the state file with the same last action" do
+                instance.resume
+
+                state_file.read[:last_action].must_equal s
+              end
+
+              it "logs the action start" do
+                instance.resume
+
+                logger_io.string.must_match regex_for("Resuming #{instance.to_str}")
+              end
+
+              it "logs the action finish" do
+                instance.resume
+
+                logger_io.string
+                  .must_match regex_for("Resumed #{instance.to_str}.")
+              end
+            end
+          end
+        end
+      end
+    end
+
     describe "#converge" do
       describe "with no state" do
         it "calls Driver#create and Provisioner#call with empty state hash" do
