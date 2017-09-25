@@ -176,6 +176,11 @@ module Kitchen
       state_file.write(state)
     end
 
+    def suspended?
+      state = state_file.read
+      state[:suspended]
+    end
+
     # Destroys this instance.
     #
     # @see Driver::Base#destroy

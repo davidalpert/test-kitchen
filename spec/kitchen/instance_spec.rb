@@ -274,6 +274,24 @@ describe Kitchen::Instance do
     end
   end
 
+  describe "#suspended?" do
+    describe "state is suspended" do
+      before { state_file.write(suspended: true) }
+
+      it "should return true" do
+        instance.suspended?.must_equal true
+      end
+    end
+
+    describe "state is not suspended" do
+      before { state_file.write(suspended: false) }
+
+      it "should return false" do
+        instance.suspended?.must_equal false
+      end
+    end
+  end
+
   it "#name returns it name" do
     instance.name.must_equal "suite-platform"
   end
