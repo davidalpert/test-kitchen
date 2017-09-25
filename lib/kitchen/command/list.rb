@@ -64,7 +64,7 @@ module Kitchen
           color_pad(instance.provisioner.name),
           color_pad(instance.verifier.name),
           color_pad(instance.transport.name),
-          format_last_action(instance.last_action),
+          format_last_action(instance),
           format_last_error(instance.last_error),
         ]
       end
@@ -74,8 +74,10 @@ module Kitchen
       # @param last_action [String] the last action
       # @return [String] formated last action
       # @api private
-      def format_last_action(last_action)
-        case last_action
+      def format_last_action(instance)
+        return colorize("Suspended", :yellow) if instance.suspended?
+
+        case instance.last_action
         when "create" then colorize("Created", :cyan)
         when "converge" then colorize("Converged", :magenta)
         when "setup" then colorize("Set Up", :blue)

@@ -56,7 +56,7 @@ module Kitchen
         state.delete(:my_id)
       end
 
-      private
+      protected
 
       # Report what action is taking place, sleeping if so configured, and
       # possibly fail randomly.

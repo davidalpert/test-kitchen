@@ -167,10 +167,12 @@ module Kitchen
         warn("Cannot suspend #{to_str} - instance is already suspended.")
       elsif state[:last_action].nil?
         warn("Cannot suspend #{to_str} - instance is not created.")
-      elsif [:create, :converge, :setup, :verify].include?(state[:last_action])
+      elsif %w(create converge setup verify).include?(state[:last_action].to_s)
         driver.suspend(state)
         state[:suspended] = true
         info("Suspended #{to_str}.")
+      else
+        raise 'Unexpected; should not get here.'
       end
     ensure
       state_file.write(state)
