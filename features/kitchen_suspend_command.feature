@@ -25,7 +25,6 @@ Feature: Suspending kitchen instances
 
   @spawn
   Scenario: Suspending a single instance when suspend is supported
-
     When I successfully run `kitchen create client-beans`
     And I successfully run `kitchen list client-beans`
     Then the stdout should match /^client-beans\s+.+\s+Created\s+\<None\>\Z/
@@ -38,7 +37,6 @@ Feature: Suspending kitchen instances
 
   @spawn
   Scenario Outline: Suspending and resume a single instance doesn't change last action
-
     When I successfully run `kitchen <action> client-beans`
     And I successfully run `kitchen list client-beans`
     Then the stdout should match /^client-beans\s+.+\s+<last_action>\s+\<None\>\Z/
@@ -54,6 +52,31 @@ Feature: Suspending kitchen instances
     And the exit status should be 0
     When I successfully run `kitchen list client-beans`
     Then the stdout should match /^client-beans\s+.+\s+<last_action>\s+\<None\>\Z/
+
+    Examples:
+      | action   | last_action |
+      | create   | Created     |
+      | converge | Converged   |
+      | setup    | Set Up      |
+      | verify   | Verified    |
+
+  @spawn
+  Scenario Outline: Deleting a suspended instance
+    When I successfully run `kitchen <action> client-beans`
+    And I successfully run `kitchen list client-beans`
+    Then the stdout should match /^client-beans\s+.+\s+<last_action>\s+\<None\>\Z/
+    When I successfully run `kitchen suspend client-beans`
+    Then the output should contain "Suspending <client-beans> ..."
+    And the output should contain "Suspended <client-beans>."
+    And the exit status should be 0
+    When I successfully run `kitchen list client-beans`
+    Then the stdout should match /^client-beans\s+.+\s+Suspended\s+\<None\>\Z/
+    When I run `kitchen destroy client-beans`
+    Then the output should contain "Destroying <client-beans>..."
+    And the output should contain "Finished destroying <client-beans>"
+    And the exit status should be 0
+    When I successfully run `kitchen list client-beans`
+    Then the stdout should match /^client-beans\s+.+\s+<Not Created>\s+\<None\>\Z/
 
     Examples:
       | action   | last_action |
