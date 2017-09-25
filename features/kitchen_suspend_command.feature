@@ -56,8 +56,11 @@ Feature: Suspending kitchen instances
     Then the stdout should match /^client-beans\s+.+\s+<last_action>\s+\<None\>\Z/
 
     Examples:
-      | action | last_action |
-      | create | Created |
+      | action   | last_action |
+      | create   | Created     |
+      | converge | Converged   |
+      | setup    | Set Up      |
+      | verify   | Verified    |
 
   @spawn
   Scenario: Suspending a single instance when suspend is not supported

@@ -241,6 +241,13 @@ module Kitchen
       perform("suspend", "suspend", args)
     end
 
+    desc "resume INSTANCE|REGEXP", "Resume one instance"
+    log_options
+    def resume(*args)
+      update_config!
+      perform("resume", "resume", args)
+    end
+
     desc "login INSTANCE|REGEXP", "Log in to one instance"
     log_options
     def login(*args)

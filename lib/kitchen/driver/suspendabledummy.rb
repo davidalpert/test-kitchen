@@ -39,6 +39,11 @@ module Kitchen
       def suspend(state)
         report(:suspend, state)
       end
+
+      # (see Base#resume)
+      def resume(state)
+        report(:resume, state)
+      end
     end
   end
 end
